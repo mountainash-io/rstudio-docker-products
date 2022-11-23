@@ -39,9 +39,34 @@ build OS=IMAGE_OS VERSION=RSW_VERSION *TAGS="":
     tag_array+=("-t" $tag)
   done
 
-  docker buildx --builder="{{ BUILDX_PATH }}" build --load ${BUILDX_ARGS} \
+  docker buildx --builder="{{ BUILDX_PATH }}" build --load ${BUILDX_ARGS} --no-cache \
     ${tag_array[@]} \
     --build-arg RSW_VERSION="{{ VERSION }}" \
+    --build-arg R_VERSION="{{ R_VERSION }}" \
+    --build-arg R_VERSION_ALT="{{ R_VERSION_ALT }}" \
+    --build-arg PYTHON_VERSION="{{ PYTHON_VERSION }}" \
+    --build-arg PYTHON_VERSION_ALT="{{ PYTHON_VERSION_ALT }}" \
+    --file=./Dockerfile.$(just -f ../Justfile _parse-os {{OS}}) .
+
+build-podman OS=IMAGE_OS VERSION=RSW_VERSION *TAGS="":
+  #!/usr/bin/env bash
+  set -euxo pipefail
+
+  if [[ "{{TAGS}}" == "" ]]; then
+    raw_tag_array=($(just _make-default-tag {{OS}}))
+  else
+    raw_tag_array=("{{TAGS}}")
+  fi
+
+  tag_array=()
+  for tag in $raw_tag_array
+  do
+    tag_array+=("-t" $tag)
+  done
+
+  podman build --format "docker" --no-cache \
+    ${tag_array[@]} \
+    --build-arg RSC_VERSION="{{ VERSION }}" \
     --build-arg R_VERSION="{{ R_VERSION }}" \
     --build-arg R_VERSION_ALT="{{ R_VERSION_ALT }}" \
     --build-arg PYTHON_VERSION="{{ PYTHON_VERSION }}" \
@@ -73,6 +98,18 @@ run TAG=`just _make-default-tag` CMD="":
     exit 1
   fi
   docker run -it --privileged \
+    -p 8787:8787 \
+    -e RSW_LICENSE="{{ RSW_LICENSE }}" \
+    "{{ TAG }}" {{ CMD }}
+
+run-podman TAG=`just _make-default-tag` CMD="":
+  #!/usr/bin/env bash
+  set -euxo pipefail
+  if [ -z "{{ RSW_LICENSE }}" ]; then
+    echo "Please set RSW_LICENSE to a valid RStudio Workbench license before running."
+    exit 1
+  fi
+  podman run -it --privileged \
     -p 8787:8787 \
     -e RSW_LICENSE="{{ RSW_LICENSE }}" \
     "{{ TAG }}" {{ CMD }}

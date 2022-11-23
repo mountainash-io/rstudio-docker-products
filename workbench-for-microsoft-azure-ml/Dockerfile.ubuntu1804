@@ -1,4 +1,4 @@
-FROM rstudio/r-base:bionic AS workbench
+FROM docker.io/rstudio/r-base:bionic AS workbench
 LABEL maintainer="RStudio Docker <docker@rstudio.com>"
 
 # Locale configuration --------------------------------------------------------#

@@ -31,7 +31,25 @@ build OS=IMAGE_OS VERSION=RSC_VERSION +TAGS=DEFAULT_TAG:
     tag_array+=("-t" $TAG)
   done
 
-  docker buildx --builder="{{ BUILDX_PATH }}" build --load ${BUILDX_ARGS} \
+  docker buildx --builder="{{ BUILDX_PATH }}" build --load ${BUILDX_ARGS} --no-cache \
+    ${tag_array[@]} \
+    --build-arg RSC_VERSION="{{ VERSION }}" \
+    --build-arg R_VERSION="{{ R_VERSION }}" \
+    --build-arg R_VERSION_ALT="{{ R_VERSION_ALT }}" \
+    --build-arg PYTHON_VERSION="{{ PYTHON_VERSION }}" \
+    --build-arg PYTHON_VERSION_ALT="{{ PYTHON_VERSION_ALT }}" \
+    --file=./Dockerfile.$(just -f ../Justfile _parse-os {{OS}}) .
+
+build-podman OS=IMAGE_OS VERSION=RSC_VERSION +TAGS=DEFAULT_TAG:
+  #!/usr/bin/env bash
+  set -euxo pipefail
+  tag_array=()
+  for TAG in {{TAGS}}
+  do
+    tag_array+=("-t" $TAG)
+  done
+
+  podman build --format "docker" \
     ${tag_array[@]} \
     --build-arg RSC_VERSION="{{ VERSION }}" \
     --build-arg R_VERSION="{{ R_VERSION }}" \
@@ -67,4 +85,17 @@ run TAG=DEFAULT_TAG CMD="":
   docker run -it --privileged \
     -p 3939:3939 \
     -e RSC_LICENSE="{{ RSC_LICENSE }}" \
+    "{{ TAG }}" {{ CMD }}
+
+run-podman TAG=DEFAULT_TAG CMD="":
+  #!/usr/bin/env bash
+  set -euxo pipefail
+  if [ -z "{{ RSC_LICENSE }}" ]; then
+    echo "Please set RSC_LICENSE to a valid RStudio Connect license before running."
+    exit 1
+  fi
+  podman run -it --privileged \
+    -p 3939:3939 \
+    -e RSC_LICENSE="{{ RSC_LICENSE }}" \
+    --network podman \
     "{{ TAG }}" {{ CMD }}
