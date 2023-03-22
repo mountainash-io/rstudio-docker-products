@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - main
-      - dev
+      - r-session-complete-2022.07.0-x
   pull_request:
 
 name: build/test/push (latest)
@@ -50,7 +49,7 @@ jobs:
           just -f ci.Justfile test-base ${{ matrix.os }} base
 
       - name: Run Snyk to check Docker image for vulnerabilities (main)
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -61,7 +60,7 @@ jobs:
           command: monitor
 
       - name: Run Snyk to check Docker image for vulnerabilities (branch)
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref_name != 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -72,14 +71,14 @@ jobs:
           command: test
 
       - name: Login to Docker Hub
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Login to ghcr.io
-        #if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -87,7 +86,7 @@ jobs:
           password: ${{ secrets.BUILD_PAT }}
 
       - name: Push image(s) to Docker Hub
-        #if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         run: |
           just -f ci.Justfile push-images ${{ steps.build-base-image.outputs.TAGS }}
 
@@ -143,7 +142,7 @@ jobs:
           just -f ci.Justfile test-base ${{ matrix.os }} pro
 
       - name: Run Snyk to check Docker image for vulnerabilities (main)
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -154,7 +153,7 @@ jobs:
           command: monitor
 
       - name: Run Snyk to check Docker image for vulnerabilities (branch)
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref_name != 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -186,18 +185,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {product: 'workbench', os: 'ubuntu1804'}
-          - {product: 'workbench', os: 'ubuntu2204'}
-          - {product: 'connect', os: 'ubuntu1804'}
-          - {product: 'connect', os: 'ubuntu2204'}
-          - {product: 'connect-content-init', os: 'ubuntu1804'}
-          - {product: 'connect-content-init', os: 'ubuntu2204'}
-          - {product: 'package-manager', os: 'ubuntu1804'}
-          - {product: 'package-manager', os: 'ubuntu2204'}
           - {product: 'r-session-complete', os: 'ubuntu1804'}
           - {product: 'r-session-complete', os: 'centos7'}
           - {product: 'r-session-complete', os: 'ubuntu2204'}
-          - {product: 'workbench-for-microsoft-azure-ml', os: 'ubuntu1804'}
 
     steps:
       - name: Check Out Repo
@@ -256,7 +246,7 @@ jobs:
           just test-image ${{ matrix.config.product }} ${{ steps.get-version.outputs.VERSION }} ${{ steps.build-image.outputs.TAGS }}
 
       - name: Run Snyk to check Docker image for vulnerabilities (main)
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -267,7 +257,7 @@ jobs:
           command: monitor
 
       - name: Run Snyk to check Docker image for vulnerabilities (branch)
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref_name != 'r-session-complete-2022.07.0-x' }}
         continue-on-error: true
         uses: snyk/actions/docker@master
         env:
@@ -278,13 +268,13 @@ jobs:
           command: test
 
       - name: Login to Docker Hub
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Push image(s) to Docker Hub
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_name == 'r-session-complete-2022.07.0-x' }}
         run: |
           just -f ci.Justfile push-images ${{ steps.build-image.outputs.TAGS }}
