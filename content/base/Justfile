@@ -4,7 +4,7 @@ BUILDX_PATH := ""
 
 IMAGE_PREFIX := "rstudio/"
 PRODUCT := "content-base"
-IMAGE_OS := "ubuntu1804"
+IMAGE_OS := "ubuntu2204"
 
 R_VERSION := "3.6.3"
 

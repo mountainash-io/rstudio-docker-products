@@ -4,7 +4,7 @@ BUILDX_PATH := ""
 
 IMAGE_PREFIX := "rstudio-"
 PRODUCT := "package-manager"
-IMAGE_OS := "ubuntu1804"
+IMAGE_OS := "ubuntu2204"
 
 RSPM_VERSION := "2023.04.0-6"
 RSPM_LICENSE := ""
