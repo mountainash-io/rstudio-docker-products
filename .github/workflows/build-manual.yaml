@@ -71,6 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Version
+        if: endsWith(inputs.product, 'base') || endsWith(inputs.product, 'pro')
         id: get-version
         run: |
           if [[ "${{ inputs.version }}" == "auto" ]]; then
@@ -85,15 +86,17 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           ARGS_CMD=""
-          if [[ "${{ inputs.type }}" == "release" ]]; then
-            ARGS_CMD="get-product-args"
+          BASE_TYPE=$(sed 's/.*\///' <<< ${{ inputs.product }})
+          if [[ ! -z "$BASE_TYPE" ]]; then
+            ARGS_CMD="get-base-args $BASE_TYPE"
+          else if [[ "${{ inputs.type }}" == "release" ]]; then
+            ARGS_CMD="get-product-args ${{ inputs.product }}"
           else
-            ARGS_CMD="get-prerelease-args ${{inputs.type}}"
+            ARGS_CMD="get-prerelease-args ${{inputs.type}} ${{ inputs.product }}"
           fi
           BUILD_ARGS=$( \
               just -f ci.Justfile \
               ${ARGS_CMD} \
-              ${{ inputs.product }} \
               ${{ inputs.os }} \
               ${{ steps.get-version.outputs.VERSION }} \
           )
@@ -133,4 +136,3 @@ jobs:
           ghcr-token: ${{ secrets.BUILD_PAT }}
           dockerhub-username: ${{ secrets.DOCKER_HUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
