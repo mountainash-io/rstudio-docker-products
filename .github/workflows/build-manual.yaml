@@ -9,6 +9,7 @@ on:
           - main
           - dev
           - dev-rspm
+          - patch-workbench-2023.03.2
       product:
         description: "The product/path to build."
         required: true
