@@ -114,6 +114,7 @@ function get_tags {
 variable BASE_BUILD_MATRIX {
     default = {
         builds = [
+            {os = "ubuntu2204", r_primary = "4.2.3", r_alternate = "4.1.3", py_primary = "3.9.19", py_alternate = "3.8.19"},
             {os = "ubuntu2204", r_primary = "4.4.0", r_alternate = "4.3.3", py_primary = "3.12.4", py_alternate = "3.11.9"},
         ]
     }
@@ -150,7 +151,7 @@ variable CONNECT_CONTENT_INIT_BUILD_MATRIX {
 variable R_SESSION_COMPLETE_BUILD_MATRIX {
     default = {
         builds = [
-            {os = "ubuntu2204", r_primary = "4.4.0", r_alternate = "4.3.3", py_primary = "3.12.4", py_alternate = "3.11.9"},
+            {os = "ubuntu2204", r_primary = "4.2.3", r_alternate = "4.1.3", py_primary = "3.9.19", py_alternate = "3.8.19"},
         ]
     }
 }
@@ -158,7 +159,7 @@ variable R_SESSION_COMPLETE_BUILD_MATRIX {
 variable WORKBENCH_BUILD_MATRIX {
     default = {
         builds = [
-            {os = "ubuntu2204", r_primary = "4.4.0", r_alternate = "4.3.3", py_primary = "3.12.4", py_alternate = "3.11.9"},
+            {os = "ubuntu2204", r_primary = "4.2.3", r_alternate = "4.1.3", py_primary = "3.9.19", py_alternate = "3.8.19"},
         ]
     }
 }
