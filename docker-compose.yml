@@ -10,16 +10,8 @@ services:
     ports:
       - "127.0.0.1:8787:8787"
       - "127.0.0.1:5559:5559"
-
-  connect:
-    container_name: rstudio-connect
-    image: rstudio/rstudio-connect:${RSC_VERSION:-ubuntu2204}
-    privileged: true
-    environment:
-      RSC_LICENSE: ${RSC_LICENSE}
-      LICENSE_SERVER: ${RSC_LICENSE_SERVER}
-    ports:
-      - "127.0.0.1:3939:3939"
+    volumes:
+      - /path/to/secret:/run/secrets
 
   package-manager:
     container_name: rstudio-package-manager

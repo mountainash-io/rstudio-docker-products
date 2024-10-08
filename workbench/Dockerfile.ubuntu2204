@@ -101,10 +101,11 @@ RUN mkdir -p /var/lib/rstudio-server/monitor/log && \
     mkdir -p /startup/custom/ && \
     printf '\n# allow home directory creation\nsession required pam_mkhomedir.so skel=/etc/skel umask=0077' >> /etc/pam.d/common-session
 
+### Install VSCode ###
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+
 EXPOSE 8787/tcp
 EXPOSE 5559/tcp
 
 ENTRYPOINT []
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
-
-
